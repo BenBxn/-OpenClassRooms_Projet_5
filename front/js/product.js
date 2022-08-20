@@ -111,7 +111,7 @@ function ajoutPanier(nouveauProduit) {
 
     enregistrerProduits = [];
     enregistrerProduits.push(nouveauProduit);
-
+    fenetreConfirmation();
 
 //enregistrer les modifications dans le localStorage
 enrigistrerPanier(enregistrerProduits);
@@ -122,6 +122,22 @@ enrigistrerPanier(enregistrerProduits);
 
 
 
+
+
+
+//fenetre de confirmation
+function fenetreConfirmation() {
+    if (
+        window.confirm(`Merci! Le produit "${document.getElementById("title").textContent}", 
+        de couleur : ${document.getElementById("colors").value} pour une quantité de : ${document.getElementById("quantity").value}, 
+        a bien été ajouté au panier. 
+        Appuyez sur "OK" pour consulter le panier ou sur "annuler" pour continuer vos achats.`)
+        ) {
+        window.location.href = "cart.html";
+        } else {
+        window.location;
+        }
+}
 
 
 
