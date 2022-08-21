@@ -5,7 +5,7 @@
 const id = new URL(window.location.href).searchParams.get("_id");
 
 //Variables qui vont recevoir le contenu HTML
-const imgage = document.querySelector("div.item__img");
+const image = document.querySelector("div.item__img");
 const titre = document.getElementById("title");
 const prix = document.getElementById("price");
 const description = document.getElementById("description");
@@ -44,7 +44,7 @@ function recupAPI_Produits() {
 
     //injecte code HTML dynamique dans notre variable
     .then(function(Produit) { 
-        imgage.innerHTML = `<img src="${Produit.imageUrl}"/>`;
+        image.innerHTML = `<img src="${Produit.imageUrl}"/>`;
         titre.textContent = Produit.name;
         prix.textContent = Produit.price;
         description.textContent = Produit.description;
@@ -65,7 +65,7 @@ window.addEventListener("DOMContentLoaded", function() {
 /*LocalStorage*/
 
 // Enregistrer le panier dans le localStorage
-function enrigistrerPanier(panier) {
+function enregistrerPanier(panier) {
     localStorage.setItem("panier", JSON.stringify(panier));
 }
 // Recuperer les données du localStorage
@@ -114,7 +114,7 @@ function ajoutProduit() {
             }
 
 //enregistrer les modifications dans le localStorage
-enrigistrerPanier(panier);
+enregistrerPanier(panier);
 }
 
 
@@ -147,6 +147,8 @@ ajoutProduitBtn.addEventListener("click",function(event) {
 
 
 
+//Test Confirmation et validation
+
 /* 
     // element de validation
     let valide = true;
@@ -169,12 +171,10 @@ ajoutProduitBtn.addEventListener("click",function(event) {
         ajoutProduit(Produit);
     }
 });
+*/
 
 
-
-
-
-
+/*
 //fenetre de confirmation
 function fenetreConfirmation() {
     if (
