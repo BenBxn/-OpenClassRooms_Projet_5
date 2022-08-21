@@ -1,124 +1,174 @@
 
-//VARIABLES
+////VARIABLES////
 
 //Récupération de l'id via les paramètres de l'url
 const id = new URL(window.location.href).searchParams.get("_id");
 
+//Variables qui vont recevoir le contenu HTML
+const imgage = document.querySelector("div.item__img");
+const titre = document.getElementById("title");
+const prix = document.getElementById("price");
+const description = document.getElementById("description");
+
+// Événement et Variable qui manipule la couleur
+let Couleurs;
+const selectionCouleur = document.getElementById("colors");
+selectionCouleur.addEventListener("change", function(event) {
+    Couleurs = event.target.value;   /* ligne 68 product.html */
+})
+
+// Événement et Variable qui manipule la quantité
+let choixQuantité;
+const quantity = document.getElementById("quantity");
+quantity.addEventListener("change", function(event) {
+    choixQuantité = parseInt(event.target.value); /* ligne 76 product.html */
+    /* parseInt() = analyse une chaîne de caractère fournie en argument et renvoie un entier exprimé dans une base donnée*/ 
+})
 
 //bouton qui va ajouter les données dans localStorage
-const ajoutPanierBtn = document.getElementById("addToCart"); /*ligne 81 */
+const ajoutProduitBtn = document.getElementById("addToCart"); /*ligne 81 product.html */
 
 
 
+////FONCTIONS////
 
+/*Recuperation données API*/
 
-//récupérer les données de l'API puis les injecter dans le HTML
-//importer les données de l'article qui correspond à l'id présent dans l'url
-fetch(`http://localhost:3000/api/products/${id}`)
-//Test de validation si OK, récupération des données de l'API
-.then(function (response) {
-    return response.json()
+//Récuperer les données de l'API puis les injecter dans le HTML
+function recupAPI_Produits() {
+    fetch(`http://localhost:3000/api/products/${id}`)
+    //Test de validation si OK, récupération des données de l'API
+    .then(function(reponse) {
+        return reponse.json(); 
+        }) 
+
+    //injecte code HTML dynamique dans notre variable
+    .then(function(Produit) { 
+        imgage.innerHTML = `<img src="${Produit.imageUrl}"/>`;
+        titre.textContent = Produit.name;
+        prix.textContent = Produit.price;
+        description.textContent = Produit.description;
+        quantity.Produit = 0;
+        for (let each of Produit.colors) {
+            selectionCouleur.innerHTML += `<option Produit=${each}>${each}</option>`;
+        }
     })
-
-.then(function(Produit) { 
-
-    document.getElementsByClassName("item__img")[0].innerHTML = `<img src="${Produit.imageUrl}" alt="${Produit.altTxt}">`; /*??*/
-    
-    document.getElementById("title").innerHTML = Produit.name;
-    document.getElementById("price").innerHTML = Produit.price;
-    document.getElementById("description").innerHTML = Produit.description;
-
-    //Choix couleurs
-    const productColors = document.getElementById("colors");
-    for (const color of Produit.colors) {
-    const itemColor = document.createElement("option");
-    productColors.appendChild(itemColor);
-    itemColor.value = color;
-    itemColor.innerText = color;
-    }
-});
-
-
-
-
-
-//Ajouter des produits au panier avec local storage////////////////////////////////////////////////////
-
-/*voir eventlistener ? */
-ajoutPanierBtn.addEventListener("click", () => {
-
-    //sélectionne l'id colors et quantity situés dans le html
-    let Produit = {
-        color : document.getElementById("colors").value,
-        quantity : Number(document.getElementById("quantity").value),
-    };
-    // element de validation
-    let valid = true;
-    //verifier si couleur choisie
-    if (
-        Produit.color == "") 
-        {
-        valid = false;
-        alert("Veuillez sélectionner une couleur.");
-    }
-    //verifier quantité
-    if (
-        Produit.quantity > 100 ||
-        Produit.quantity < 1) 
-        {
-        valid = false; 
-        alert("Veuillez sélectionner une quantité entre 1 et 100.");
-    }
-    if (valid) {
-        ajoutPanier(Produit);
-    }
-});
-
-
-
-
-//enregistrer panier dans le localStorage//////////////////////////////////////////////////////////////
-function enrigistrerPanier(monPanier) {
-    localStorage.setItem("monPanier", JSON.stringify(monPanier));
 }
-//recuperer les donnees du localStorage
+
+// Déclenche la fonction recupAPI au chargement de la page
+window.addEventListener("DOMContentLoaded", function() {
+    recupAPI_Produits();
+})
+
+
+
+/*LocalStorage*/
+
+// Enregistrer le panier dans le localStorage
+function enrigistrerPanier(panier) {
+    localStorage.setItem("panier", JSON.stringify(panier));
+}
+// Recuperer les données du localStorage
 function ajoutProduitPanier() {
-    let enregistrerProduit = localStorage.getItem("monPanier");
+    let panier = localStorage.getItem("panier");
     // verifier le cas où il y a deja des donnees enregistrees
-    if (enregistrerProduit == null) {
+    if (panier == null) {
         return [];
         } 
         //transformer les donnees du LocalStorage en javascript
         else {
-        return JSON.parse(enregistrerProduit);
+        return JSON.parse(panier);
         }
 }
 
-
-
-
-
-
+/*Panier*/
 
 //ajouter un produit 
-function ajoutPanier(nouveauProduit) {
-    let enregistrerProduits = ajoutProduitPanier();
-
-// element de validation ?
-// s'il y a deja des produits enregistres 
-// si produit different 
-
-
-    enregistrerProduits = [];
-    enregistrerProduits.push(nouveauProduit);
-    fenetreConfirmation();
+function ajoutProduit() {
+    // Affilier un objet article contenant les informations qui nous intéressent*/
+    let produit = {
+        id: id,
+        colors: Couleurs,
+        quantity: choixQuantité
+    };
+    //récupèrer le panier
+    let panier = ajoutProduitPanier();
+    // Rechercher dans le panier si l'article y est déjà présent
+    let detecterProduit = panier.find(p => p.id == produit.id);
+    let detecterCouleur = panier.find(p => p.colors == produit.colors);
+        // Si l'article n'est pas présent dans le panier, il est ajouté
+        if (detecterProduit == undefined) {
+            produit.quantity = choixQuantité;
+            panier.push(produit); 
+        }
+        // Si l'article est présent, mais d'une couleur différente, il est ajouté
+        else {
+            if (detecterCouleur == undefined) {
+                produit.quantity = choixQuantité;
+                panier.push(produit);
+            }
+            // Si l'article est présent (même type, même couleur), on augmente dans le panier la quantité
+            else {
+                detecterProduit.quantity += choixQuantité;
+            }
+            }
 
 //enregistrer les modifications dans le localStorage
-enrigistrerPanier(enregistrerProduits);
+enrigistrerPanier(panier);
 }
 
 
 
+
+/* Confirmation et Validation */
+//Déclenche la fonction ajoutProduit en cliquant sur le BTN
+ajoutProduitBtn.addEventListener("click",function(event) {
+
+        //verifier si couleur choisie
+        if (Couleurs == undefined) {
+            event.preventDefault();
+            alert("Veuillez sélectionner une couleur.");
+        }
+        //verifier quantité
+        if (
+            choixQuantité == undefined) {
+            event.preventDefault();
+            alert("Veuillez sélectionner une quantité entre 1 et 100.");
+        }
+        else {
+            ajoutProduit();
+            alert("Article(s) ajouté(s) au panier");
+        }
+    });
+
+
+
+
+
+
+
+/* 
+    // element de validation
+    let valide = true;
+    //verifier si couleur choisie
+    if (
+        Produit.color == "") 
+        {
+        valide = false;
+        alert("Veuillez sélectionner une couleur.");
+    }
+    //verifier quantité
+    if (
+        choixQuantité > 100 ||
+        choixQuantité < 1) 
+        {
+        valide = false; 
+        alert("Veuillez sélectionner une quantité entre 1 et 100.");
+    }
+    if (valide) {
+        ajoutProduit(Produit);
+    }
+});
 
 
 
@@ -129,16 +179,16 @@ enrigistrerPanier(enregistrerProduits);
 function fenetreConfirmation() {
     if (
         window.confirm(`Merci! Le produit "${document.getElementById("title").textContent}", 
-        de couleur : ${document.getElementById("colors").value} pour une quantité de : ${document.getElementById("quantity").value}, 
+        de couleur : ${document.getElementById("colors").Produit} pour une quantité de : ${document.getElementById("quantity").Produit}, 
         a bien été ajouté au panier. 
         Appuyez sur "OK" pour consulter le panier ou sur "annuler" pour continuer vos achats.`)
         ) {
-        window.location.href = "cart.html";
+        window.location.href = "panier.html";
         } else {
         window.location;
         }
 }
-
+*/
 
 
 
