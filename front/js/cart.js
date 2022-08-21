@@ -8,7 +8,7 @@ const href = window.location.href;
 const url = new URL(href);
 const id = url.searchParams.get("id");
 
-
+//Variables qui vont recevoir le contenu HTML
 const articlePanier = document.getElementById("cart__items");
 const quantitéTotal = document.getElementById("totalQuantity");
 const prixTotal = document.getElementById("totalPrice");
@@ -17,27 +17,31 @@ const prixTotal = document.getElementById("totalPrice");
 ////FONCTIONS////
 
 //fonctions localStorage get/set
-function sauvegardePanier(monPanier) {
-    localStorage.setItem("monPanier", JSON.stringify(monPanier));
+function enregistrerPanier(panier) {
+    localStorage.setItem("panier", JSON.stringify(panier));
 }
-function Panier() {
-    let monPanier = localStorage.getItem("monPanier");
+function localSToragePanier() {
+    let panier = localStorage.getItem("panier");
     //si le localStorage est vide
-    if (monPanier === null) {
+    if (panier === null) {
         return [];
     }
     else {
         //données du LocalStorage en javascript
-        return JSON.parse(monPanier);
+        return JSON.parse(panier);
     }
 }
+
+
 //Afficher le contenu du panier
 function affichagePanier() {
-    let monPanier = Panier();
+    let panier = localSToragePanier();
+    let sommeProduit = 0;
+    let sommePrix = 0;
 
     // Recuperer récupérer les données API de chaque article contenu dans le panier, via son id*/
-    for (let p in monPanier) {
-            fetch(`http://localhost:3000/api/products/${p.id}`)
+    for (let p in panier) {
+            fetch(`http://localhost:3000/api/products/${panier[p].id}`)
             //Test de validation si OK, récupération des données de l'API
             .then(function (reponse) {
                     return reponse.json();
@@ -69,7 +73,10 @@ function affichagePanier() {
             </article>`;
 
                 // calculer article total  montant total
-
+                sommeProduit += JSON.parse(p.quantity);
+                quantitéTotal.textContent = (sommeProduit);
+                sommePrix += JSON.parse(p.quantity * produit.price);
+                prixTotal.textContent = (sommePrix);
             })
     }
 }
@@ -78,8 +85,7 @@ window.addEventListener("DOMContentLoaded", function() {
     affichagePanier();
 })
 
-    //appel API selon ID produit
-    //integrer le HTML //creation balises
+
 
 
 
