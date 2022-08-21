@@ -30,3 +30,7 @@ function recupAPI_Index() {
 );
 }
 
+// Déclenche la fonction recupAPI au chargement de la page
+window.addEventListener("DOMContentLoaded", function() {
+    recupAPI_Index();
+})
