@@ -49,21 +49,21 @@ function affichagePanier() {
             
             // injecte code HTML dynamique dans nos variables
             .then(function (produit) {
-                articlePanier.innerHTML +=
-                    `<article class="cart__item" data-id="${p.id}" data-color="${p.colors}">
+                articlePanier.innerHTML += 
+                `<article class="cart__item" data-id="${panier[p].id}" data-color="${panier[p].colors}">
                 <div class="cart__item__img">
                     <img src="${produit.imageUrl}" alt="Photographie d'un canapé">
                 </div>
                 <div class="cart__item__content">
                     <div class="cart__item__content__description">
                         <h2>${produit.name}</h2>
-                        <p>${p.colors}</p>
+                        <p>${panier[p].colors}</p>
                         <p>${produit.price} €</p>
                     </div>
                     <div class="cart__item__content__settings">
                         <div class="cart__item__content__settings__quantity">
                             <p>Qté : </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${p.quantity}"/>
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${panier[p].quantity}"/>
                         </div>
                         <div class="cart__item__content__settings__delete">
                             <p class="deleteItem">Supprimer</p>
@@ -73,20 +73,17 @@ function affichagePanier() {
             </article>`;
 
                 // calculer article total  montant total
-                sommeProduit += JSON.parse(p.quantity);
+                sommeProduit += JSON.parse(panier[p].quantity);
                 quantitéTotal.textContent = (sommeProduit);
-                sommePrix += JSON.parse(p.quantity * produit.price);
+                sommePrix += JSON.parse(panier[p].quantity * produit.price);
                 prixTotal.textContent = (sommePrix);
             })
     }
 }
-// Déclenche la fonction recupAPI au chargement de la page
+// Déclenche la fonction affichagePanier au chargement de la page
 window.addEventListener("DOMContentLoaded", function() {
     affichagePanier();
 })
-
-
-
 
 
 
