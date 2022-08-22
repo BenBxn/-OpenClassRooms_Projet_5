@@ -51,27 +51,28 @@ function affichagePanier() {
             .then(function (produit) {
                 articlePanier.innerHTML += 
                 `<article class="cart__item" data-id="${panier[p].id}" data-color="${panier[p].colors}">
-                <div class="cart__item__img">
-                    <img src="${produit.imageUrl}" alt="Photographie d'un canapé">
-                </div>
-                <div class="cart__item__content">
-                    <div class="cart__item__content__description">
-                        <h2>${produit.name}</h2>
-                        <p>${panier[p].colors}</p>
-                        <p>${produit.price} €</p>
+                    <div class="cart__item__img">
+                        <img src="${produit.imageUrl}" alt="Photographie d'un canapé">
                     </div>
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p>Qté : </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${panier[p].quantity}"/>
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__description">
+                            <h2>${produit.name}</h2>
+                            <p>${panier[p].colors}</p>
+                            <p>${produit.price} €</p>
                         </div>
-                        <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem">Supprimer</p>
+                        <div class="cart__item__content__settings">
+                            <div class="cart__item__content__settings__quantity">
+                                <p>Qté : </p>
+                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${panier[p].quantity}"/>
+                            </div>
+                            <div class="cart__item__content__settings__delete">
+                                <p class="deleteItem">Supprimer</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </article>`;
+                </article>`;
 
+                /*console.log(panier[p]);*/
                 // calculer article total  montant total
                 sommeProduit += JSON.parse(panier[p].quantity);
                 quantitéTotal.textContent = (sommeProduit);
@@ -80,14 +81,101 @@ function affichagePanier() {
             })
     }
 }
+
+/*
 // Déclenche la fonction affichagePanier au chargement de la page
 window.addEventListener("DOMContentLoaded", function() {
     affichagePanier();
-})
+}) 
+*/
+
+// fonction modifier la quantité d'article
+const article = document.getElementsByClassName("cart__item");
+const changementQuantité = document.getElementsByClassName("itemQuantity");
+
+
+function modifierQuantité() {
+    for (let i = 0; i < changementQuantité.length; i++) {
+        changementQuantité[i].addEventListener("change", function (event) {
+            const articleId = article[i].dataset.id;
+            const articleCouleur = article[i].dataset.color;
+            const articleQuantité = parseInt(event.target.value,10);   /*voir parseint*/
+
+            function ajoutProduit() {
+                // Affilier un objet article contenant les informations qui nous intéressent
+                let produit = {
+                    id: articleId,
+                    colors: articleCouleur,
+                    quantity: articleQuantité
+                };
+                //Recuperer le panier
+                let panier = localSToragePanier();
+                //Rechercher dans le panier si l'article y est 
+                let rechercheProduit = panier.findIndex(p => p.id == produit.id);
+                panier[rechercheProduit].quantity = articleQuantité;
+                //Enregistrer 
+                enregistrerPanier(panier);
+               /* console.log(panier);*/
+            }
+            ajoutProduit();
+            //Actualiser
+            window.location.reload();
+        })
+    }
+}
+
+// fonction supprimer un article 
+const retirerArticle = document.getElementsByClassName("deleteItem"); 
+function supprimerArticle() {
+    for (let i = 0; i < retirerArticle.length; i++) {
+        //Déclenche la fonction supprimerArticle en cliquant sur supprimer
+        retirerArticle[i].addEventListener("click", function () {
+            function supprimerProduit(){
+
+                //Recuperer le panier
+                let panier = localSToragePanier();
+                //Modifier le panier
+                panier.splice(i, 1); /*splice() modifie le contenu d'un tableau en retirant des éléments et/ou en ajoutant de nouveaux éléments*/
+                //Enregistrer 
+                enregistrerPanier(panier);
+            }
+
+        supprimerProduit();
+        //Actualiser
+        window.location.reload();
+        })
+    }
+}
+
+
+// Déclenche la fonction affichagePanier au chargement de la page
+window.addEventListener("DOMContentLoaded", function() {
+    
+    affichagePanier();
+
+    setTimeout(function() {
+        modifierQuantité()
+    }, 200);
+
+    setTimeout(function() {
+        supprimerArticle()
+    }, 200);
+
+    
+}) 
 
 
 
-    //total prix 
-    //validation du formulaire
-    //validation prénom, nom, adresse, mail
+/*
+window.addEventListener("DOMContentLoaded", function () {
+    supprimerArticle();
+    modifierQuantité();
+}) 
+//modifier DOM
+*/
 
+//formulaire
+//confirmer commande et numero?
+//verifier saisi formulaire
+//verifier fonctionnement regex
+//message aalerte erreur
