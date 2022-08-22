@@ -85,7 +85,7 @@ function ajoutProduitPanier() {
 
 //ajouter un produit 
 function ajoutProduit() {
-    // Affilier un objet article contenant les informations qui nous intéressent*/
+    // Affilier un objet article contenant les informations qui nous intéressent
     let produit = {
         id: id,
         colors: Couleurs,
