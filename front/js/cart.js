@@ -165,15 +165,6 @@ window.addEventListener("DOMContentLoaded", function() {
 }) 
 
 
-
-/*
-window.addEventListener("DOMContentLoaded", function () {
-    supprimerArticle();
-    modifierQuantité();
-}) 
-//modifier DOM
-*/
-
 //formulaire
 //confirmer commande et numero?
 //verifier saisi formulaire
