@@ -1,9 +1,9 @@
 
-////VARIABLES////
+////VARIABLES CONSTANTES////
 
 //Récupération de l'id via les paramètres de l'url
 /*const id = new URL(window.location.href).searchParams.get("id");*/
-
+//Cette ligne crée :
 const href = window.location.href;
 const url = new URL(href);
 const id = url.searchParams.get("id");
@@ -22,7 +22,7 @@ function enregistrerPanier(panier) {
 }
 function localSToragePanier() {
     let panier = localStorage.getItem("panier");
-    //si le localStorage est vide
+    //si le localStorage est vide /* === égalité stricte */
     if (panier === null) {
         return [];
     }
@@ -95,7 +95,7 @@ const changementQuantité = document.getElementsByClassName("itemQuantity");
 
 
 function modifierQuantité() {
-    for (let i = 0; i < changementQuantité.length; i++) {
+    for (let i = 0; i < changementQuantité.length; i++) { //La propriété   length  d'un tableau indique le nombre d'éléments qu'il contient 
         changementQuantité[i].addEventListener("change", function (event) {
             const articleId = article[i].dataset.id;
             const articleCouleur = article[i].dataset.color;
@@ -115,7 +115,7 @@ function modifierQuantité() {
                 panier[rechercheProduit].quantity = articleQuantité;
                 //Enregistrer 
                 enregistrerPanier(panier);
-               /* console.log(panier);*/
+                /* console.log(panier);*/
             }
             ajoutProduit();
             //Actualiser
@@ -166,7 +166,61 @@ window.addEventListener("DOMContentLoaded", function() {
 
 
 //formulaire
-//confirmer commande et numero?
-//verifier saisi formulaire
-//verifier fonctionnement regex
-//message aalerte erreur
+//verifier saisies formulaire
+//constante formulaire
+const inputFirstName = document.getElementById("firstName");
+const inputLastName = document.getElementById("lastName");
+const inputAddress = document.getElementById("address");
+const inputEmail = document.getElementById("email");
+const inputCity = document.getElementById("city");
+
+
+
+
+//valider prénom / nom / adresse / email
+
+inputFirstName.addEventListener("change", function () {
+    inputValide(this, "^[a-zA-ZÀ-ÿ '-]{2,}$");
+});
+
+inputLastName.addEventListener("change", function () {
+    inputValide(this, "^[a-zA-ZÀ-ÿ '-]{2,}$");
+});
+
+inputAddress.addEventListener("change", function () {
+    inputValide(this, "^[a-zA-ZÀ-ÿ0-9 ,.'-]{2,}$");
+});
+
+inputEmail.addEventListener("change", function () {
+    inputValide(this, "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$");
+});
+
+inputCity.addEventListener("change", function () {
+    inputValide(this, "^[a-zA-ZÀ-ÿ ,.'-]{2,}$");
+});
+
+function inputValide(champSaisie, regExp) {
+    //creer regexp pour valider
+    const saisieRegExp = new RegExp(regExp, "g");
+    //valider regexp
+    const saisieValide = saisieRegExp.test(champSaisie.value);
+    const messageErreurs = champSaisie.nextElementSibling; 
+    if (saisieValide) {
+        messageErreurs.textContent = "valide";
+        return true;
+    } 
+    else {
+        messageErreurs.textContent = "format non-valide";
+        return false;
+    }
+}
+
+
+
+//confirmer commande et numero
+
+//bouton qui permet de requêter l'API et de récupérer le numéro de commande
+const commande = document.getElementById("order");
+
+
+//message alerte erreur
