@@ -223,25 +223,26 @@ function inputValide(champSaisie, regExp) {
 const commande = document.getElementById("order");
 
 commande.addEventListener("click", function (event) {
-    
-    
-    event.preventDefault();
-    /*let panier = localSToragePanier();*/
+//Recuperer le panier
+let panier = localSToragePanier();    
     if (
         inputValide(inputFirstName, inputLastName, inputCity, inputAddress, inputEmail)
     ) {
-        if (panier.length == 0) { /*localSToragePanier ou panier*/
-            alert("Attention, votre panier est vide ! ");
-        }else {
+        if (panier.length == 0) { 
+        event.preventDefault();
+        alert("Attention, votre panier est vide ! ");
+        } else {
             enregistrerCommande();
+            event.preventDefault();
             alert("Votre commande a bien été prise en compte.");
             }
         } else {
+            event.preventDefault();
             alert("Merci de bien vérifier votre formulaire avant de commander");
             }
 });
 
-function preparationCommande() {
+function preparationCommande() {    //backen controllers product.js ligne 49 à 57 erreur 400
     //format demande par le back-end
     const donneesUtilisateur = {
         firstName: inputFirstName.value,
@@ -254,26 +255,25 @@ function preparationCommande() {
 
 
     //tableau 
-   const produitsId = [];
-   for (let i = 0; i < panier.length; i++) {
-     produitsId.push(panier[i].id);
-   }
-   return {
-    produits: produitsId,
+const produitsId = [];
+    for (let i = 0; i < panier.length; i++) {
+        produitsId.push(panier[i].id);
+    }
+    return {
+    products: produitsId,
     contact: donneesUtilisateur,
-  };
+    };
 }
 
 //envoyer les donnees du formulaire et les traiter
 function enregistrerCommande() {
     const confirmationCommande = preparationCommande();
 
-    //effectuer une requête POST sur l'API et envoyer toutes les donnees (prorduct-ID + donnees contacts) dans le back-end
+    //effectuer une requête POST sur l'API 
     fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
     },
     body: JSON.stringify(confirmationCommande),
     })
@@ -282,19 +282,14 @@ function enregistrerCommande() {
             return reponse.json();
         }
     })
-    .then(function (confirmation) {
+    .then(function (Validation) {
 
-        setTimeout(function () {
-            document.location.href = `./confirmation.html?id=${confirmation.orderId}`
-        }, 200);
-       /* //vider le localStorage
-        localStorage.clear();
-        //diriger sur la page confirmation en passant l'id dans l'URL
-        window.location.replace(`confirmation.html?order=${confirmation.orderId}`);*/
+      //diriger sur la page confirmation en passant l'id dans l'URL
+        window.location.replace(`confirmation.html?order=${Validation.orderId}`);
     })
-    /*.catch((error) => {
+    .catch((error) => {
         alert(
-            "Le serveur ne répond pas. Merci de revenir ultérieurement."
+        "Le serveur ne répond pas. Merci de revenir ultérieurement."
         );
-    })*/;
+    });
 }

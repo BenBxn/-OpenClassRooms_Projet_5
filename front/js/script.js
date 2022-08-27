@@ -16,7 +16,7 @@ function recupAPI_Index() {
     //boucle for pour afficher tous les produits
     for (let Produit of Produits){  
         //injecte code HTML dynamique dans notre variable
-        Articles.innerHTML +=     
+        Articles.innerHTML +=     // += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
         //récupère ou définit la syntaxe HTML décrivant les descendants de l'élément. let contents = myElement.innerHTML;
         `<a href="./product.html?_id=${Produit._id}"> 
             <article>

@@ -1,5 +1,5 @@
 
-////VARIABLES////
+////VARIABLES CONSTANTES////
 
 //Récupération de l'id via les paramètres de l'url
 const id = new URL(window.location.href).searchParams.get("_id");
@@ -50,7 +50,7 @@ function recupAPI_Produits() {
         description.textContent = Produit.description;
         quantity.Produit = 0;
         for (let each of Produit.colors) {
-            selectionCouleur.innerHTML += `<option Produit=${each}>${each}</option>`;
+            selectionCouleur.innerHTML += `<option Produit=${each}>${each}</option>`; // += Addition et affectation
         }
     })
 }
@@ -85,7 +85,7 @@ function ajoutProduitPanier() {
 
 //ajouter un produit 
 function ajoutProduit() {
-    // Affilier un objet article contenant les informations qui nous intéressent
+    // Affilier un objet "produit" contenant les informations (paires clés-valeur)
     let produit = {
         id: id,
         colors: Couleurs,
@@ -98,18 +98,18 @@ function ajoutProduit() {
     let detecterCouleur = panier.find(p => p.colors == produit.colors);
         // Si l'article n'est pas présent dans le panier, il est ajouté
         if (detecterProduit == undefined) {
-            produit.quantity = choixQuantité;
-            panier.push(produit); 
+            produit.quantity = choixQuantité; // x contient maintenant la même valeur que y
+            panier.push(produit); // ajoute "produit" à la fin de notre tableau panier
         }
         // Si l'article est présent, mais d'une couleur différente, il est ajouté
         else {
             if (detecterCouleur == undefined) {
-                produit.quantity = choixQuantité;
-                panier.push(produit);
+                produit.quantity = choixQuantité; // x contient maintenant la même valeur que y
+                panier.push(produit); // ajoute "produit" à la fin de notre tableau panier
             }
             // Si l'article est présent (même type, même couleur), on augmente dans le panier la quantité
             else {
-                detecterProduit.quantity += choixQuantité;
+                detecterProduit.quantity += choixQuantité; // += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
             }
             }
 
