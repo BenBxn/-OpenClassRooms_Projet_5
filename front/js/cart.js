@@ -174,7 +174,7 @@ const inputAddress = document.getElementById("address");
 const inputEmail = document.getElementById("email");
 const inputCity = document.getElementById("city");
 
-
+let panier = localSToragePanier();
 
 
 //valider prénom / nom / adresse / email
@@ -222,5 +222,79 @@ function inputValide(champSaisie, regExp) {
 //bouton qui permet de requêter l'API et de récupérer le numéro de commande
 const commande = document.getElementById("order");
 
+commande.addEventListener("click", function (event) {
+    
+    
+    event.preventDefault();
+    /*let panier = localSToragePanier();*/
+    if (
+        inputValide(inputFirstName, inputLastName, inputCity, inputAddress, inputEmail)
+    ) {
+        if (panier.length == 0) { /*localSToragePanier ou panier*/
+            alert("Attention, votre panier est vide ! ");
+        }else {
+            enregistrerCommande();
+            alert("Votre commande a bien été prise en compte.");
+            }
+        } else {
+            alert("Merci de bien vérifier votre formulaire avant de commander");
+            }
+});
 
-//message alerte erreur
+function preparationCommande() {
+    //format demande par le back-end
+    const donneesUtilisateur = {
+        firstName: inputFirstName.value,
+        lastName: inputLastName.value,
+        address: inputAddress.value,
+        email: inputEmail.value,
+        city: inputCity.value,
+    };
+    console.log(donneesUtilisateur)
+
+
+    //tableau 
+   const produitsId = [];
+   for (let i = 0; i < panier.length; i++) {
+     produitsId.push(panier[i].id);
+   }
+   return {
+    produits: produitsId,
+    contact: donneesUtilisateur,
+  };
+}
+
+//envoyer les donnees du formulaire et les traiter
+function enregistrerCommande() {
+    const confirmationCommande = preparationCommande();
+
+    //effectuer une requête POST sur l'API et envoyer toutes les donnees (prorduct-ID + donnees contacts) dans le back-end
+    fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(confirmationCommande),
+    })
+    .then(function (reponse) {
+        if (reponse.ok) {
+            return reponse.json();
+        }
+    })
+    .then(function (confirmation) {
+
+        setTimeout(function () {
+            document.location.href = `./confirmation.html?id=${confirmation.orderId}`
+        }, 200);
+       /* //vider le localStorage
+        localStorage.clear();
+        //diriger sur la page confirmation en passant l'id dans l'URL
+        window.location.replace(`confirmation.html?order=${confirmation.orderId}`);*/
+    })
+    /*.catch((error) => {
+        alert(
+            "Le serveur ne répond pas. Merci de revenir ultérieurement."
+        );
+    })*/;
+}
