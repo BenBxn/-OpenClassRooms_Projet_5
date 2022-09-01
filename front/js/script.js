@@ -8,16 +8,17 @@ function recupAPI_Index() {
 
 //Test de validation si OK, récupération des données de l'API
 .then(function(reponse) {
-    return reponse.json(); 
+    return reponse.json(); //donne le résultat en json
     }) 
 
-.then(function(Produits) { 
+.then(function(Produits) { // ce que l'on a reçu et qui a été traité en json est appelé Produits
     //Pour chaque itération du tableau de valeurs qu'on vient de récupérer...
-    //boucle for pour afficher tous les produits
+    //boucle for pour afficher tous les produits (Pour chaque "produit")
     for (let Produit of Produits){  
         //injecte code HTML dynamique dans notre variable
         Articles.innerHTML +=     // += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
-        //récupère ou définit la syntaxe HTML décrivant les descendants de l'élément. let contents = myElement.innerHTML;
+        //récupère ou définit la syntaxe HTML décrivant les descendants de l'élément. let contents = myElement.innerHTML; 
+        //? & la clé associé (=) à sa valeur dynamique ${}
         `<a href="./product.html?_id=${Produit._id}"> 
             <article>
                 <img src="${Produit.imageUrl}" alt="${Produit.altTxt}">
@@ -26,11 +27,13 @@ function recupAPI_Index() {
             </article>
         </a>`;
         }
-    }
-);
+    })
+    .catch(function(err) { //Si Api indisponible Message d'erreur
+    });
 }
 
 // Déclenche la fonction recupAPI au chargement de la page
 window.addEventListener("DOMContentLoaded", function() {
     recupAPI_Index();
 })
+

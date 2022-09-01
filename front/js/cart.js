@@ -4,8 +4,11 @@
 //Récupération de l'id via les paramètres de l'url
 /*const id = new URL(window.location.href).searchParams.get("id");*/
 //Cette ligne crée :
+//créer un nom de variable pour récupérer l'URL de la page
 const href = window.location.href;
 const url = new URL(href);
+
+//créer une variable pour définir la valeur du paramètre id situé dans l'URL
 const id = url.searchParams.get("id");
 
 //Variables qui vont recevoir le contenu HTML
@@ -16,10 +19,12 @@ const prixTotal = document.getElementById("totalPrice");
 
 ////FONCTIONS////
 
-//fonctions localStorage get/set
+//fonctions localStorage 
+//Enregistrer le panier dans le localStorage en chaine de caractere
 function enregistrerPanier(panier) {
     localStorage.setItem("panier", JSON.stringify(panier));
 }
+// Recuperer les données du localStorage
 function localSToragePanier() {
     let panier = localStorage.getItem("panier");
     //si le localStorage est vide /* === égalité stricte */
@@ -27,7 +32,7 @@ function localSToragePanier() {
         return [];
     }
     else {
-        //données du LocalStorage en javascript
+    //données du LocalStorage en javascript
         return JSON.parse(panier);
     }
 }
@@ -36,10 +41,10 @@ function localSToragePanier() {
 //Afficher le contenu du panier
 function affichagePanier() {
     let panier = localSToragePanier();
-    let sommeProduit = 0;
-    let sommePrix = 0;
+    let sommeProduit = 0; //variable en tant que nombre
+    let sommePrix = 0; //variable en tant que nombre
 
-    // Recuperer récupérer les données API de chaque article contenu dans le panier, via son id*/
+    // Recuperer récupérer les données API de chaque article contenu dans le panier, via son id
     for (let p in panier) {
             fetch(`http://localhost:3000/api/products/${panier[p].id}`)
             //Test de validation si OK, récupération des données de l'API
@@ -73,8 +78,8 @@ function affichagePanier() {
                 </article>`;
 
                 /*console.log(panier[p]);*/
-                // calculer article total  montant total
-                sommeProduit += JSON.parse(panier[p].quantity);
+                // calculer article total & montant total 
+                sommeProduit += JSON.parse(panier[p].quantity); 
                 quantitéTotal.textContent = (sommeProduit);
                 sommePrix += JSON.parse(panier[p].quantity * produit.price);
                 prixTotal.textContent = (sommePrix);
@@ -95,14 +100,14 @@ const changementQuantité = document.getElementsByClassName("itemQuantity");
 
 
 function modifierQuantité() {
-    for (let i = 0; i < changementQuantité.length; i++) { //La propriété   length  d'un tableau indique le nombre d'éléments qu'il contient 
+    for (let i = 0; i < changementQuantité.length; i++) { //La propriété length d'un tableau indique le nombre d'éléments qu'il contient 
         changementQuantité[i].addEventListener("change", function (event) {
             const articleId = article[i].dataset.id;
             const articleCouleur = article[i].dataset.color;
-            const articleQuantité = parseInt(event.target.value,10);   /*voir parseint*/
-
+            const articleQuantité = parseInt(event.target.value,10); 
+            /* parseInt() = analyse une chaîne de caractère fournie en argument et renvoie un entier exprimé dans une base donnée*/
             function ajoutProduit() {
-                // Affilier un objet article contenant les informations qui nous intéressent
+                // Affilier un objet "produit" contenant les informations qui nous intéressent
                 let produit = {
                     id: articleId,
                     colors: articleCouleur,
@@ -140,9 +145,9 @@ function supprimerArticle() {
                 enregistrerPanier(panier);
             }
 
-        supprimerProduit();
-        //Actualiser
-        window.location.reload();
+            supprimerProduit();
+            //Actualiser
+            window.location.reload();
         })
     }
 }
@@ -165,9 +170,9 @@ window.addEventListener("DOMContentLoaded", function() {
 }) 
 
 
-//formulaire
-//verifier saisies formulaire
-//constante formulaire
+/*Formulaire*/
+
+//constantes formulaire
 const inputFirstName = document.getElementById("firstName");
 const inputLastName = document.getElementById("lastName");
 const inputAddress = document.getElementById("address");
@@ -178,7 +183,8 @@ let panier = localSToragePanier();
 
 
 //valider prénom / nom / adresse / email
-
+//construire expression rationnelle
+//^: debut séquence / $: fin séquence /
 inputFirstName.addEventListener("change", function () {
     inputValide(this, "^[a-zA-ZÀ-ÿ '-]{2,}$");
 });
@@ -201,10 +207,10 @@ inputCity.addEventListener("change", function () {
 
 function inputValide(champSaisie, regExp) {
     //creer regexp pour valider
-    const saisieRegExp = new RegExp(regExp, "g");
+    const saisieRegExp = new RegExp(regExp, "g"); //Recherche globale : Le flag "g" indique que l'expression rationnelle recherchera toutes les correspondances possibles d'une chaîne de caractères.
     //valider regexp
-    const saisieValide = saisieRegExp.test(champSaisie.value);
-    const messageErreurs = champSaisie.nextElementSibling; 
+    const saisieValide = saisieRegExp.test(champSaisie.value); //vérifie s'il y a une correspondance entre la chaine "champSaisie" et l'expression rationnelle "saisieRegExp". 
+    const messageErreurs = champSaisie.nextElementSibling; //Référence à l'élément frère suivant ou null s'il n'existe pas.
     if (saisieValide) {
         messageErreurs.textContent = "valide";
         return true;
@@ -225,25 +231,25 @@ const commande = document.getElementById("order");
 commande.addEventListener("click", function (event) {
 //Recuperer le panier
 let panier = localSToragePanier();    
-    if (
+    if ( //si formulaire valide
         inputValide(inputFirstName, inputLastName, inputCity, inputAddress, inputEmail)
     ) {
-        if (panier.length == 0) { 
+        if (panier.length == 0) { // si Panier vide > alerte 
         event.preventDefault();
         alert("Attention, votre panier est vide ! ");
-        } else {
+        } else {        // sinon function enregistrerCommande > alerte
             enregistrerCommande();
             event.preventDefault();
             alert("Votre commande a bien été prise en compte.");
             }
-        } else {
+        } else { // sinon (pas d'article ou article mais "inputvalide" invalide) > alerte
             event.preventDefault();
             alert("Merci de bien vérifier votre formulaire avant de commander");
             }
 });
 
-function preparationCommande() {    //backen controllers product.js ligne 49 à 57 erreur 400
-    //format demande par le back-end
+function preparationCommande() {    //backend controllers product.js ligne 49 à 57 erreur 400
+    //objet donneesUtilisateur avec donées saisies 
     const donneesUtilisateur = {
         firstName: inputFirstName.value,
         lastName: inputLastName.value,
@@ -253,9 +259,9 @@ function preparationCommande() {    //backen controllers product.js ligne 49 à 
     };
     console.log(donneesUtilisateur)
 
-
-    //tableau 
-const produitsId = [];
+    //recuperer données du panier
+    //tableau array
+    const produitsId = [];
     for (let i = 0; i < panier.length; i++) {
         produitsId.push(panier[i].id);
     }
@@ -267,15 +273,16 @@ const produitsId = [];
 
 //envoyer les donnees du formulaire et les traiter
 function enregistrerCommande() {
-    const confirmationCommande = preparationCommande();
+    const confirmationCommande = preparationCommande(); // produitsId + donneesUtilisateur
 
     //effectuer une requête POST sur l'API 
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            'Accept': 'application/json',
     },
-    body: JSON.stringify(confirmationCommande),
+    body: JSON.stringify(confirmationCommande),// valeur à convertir en chaîne JSON
     })
     .then(function (reponse) {
         if (reponse.ok) {
@@ -283,11 +290,12 @@ function enregistrerCommande() {
         }
     })
     .then(function (Validation) {
-
-      //diriger sur la page confirmation en passant l'id dans l'URL
-        window.location.replace(`confirmation.html?order=${Validation.orderId}`);
+        //vider le localStorage
+        localStorage.clear();
+        //diriger sur la page confirmation et inject numéro de commande
+        window.location.replace(`confirmation.html?order=${Validation.orderId}`); //backend controllers product.js "orderId" ligne 80 à 85
     })
-    .catch((error) => {
+    .catch((error) => { //Si API indisponible
         alert(
         "Le serveur ne répond pas. Merci de revenir ultérieurement."
         );

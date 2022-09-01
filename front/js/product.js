@@ -1,7 +1,9 @@
 
 ////VARIABLES CONSTANTES////
 
-//Récupération de l'id via les paramètres de l'url
+//Récupération de l'id via les paramètres de l'url //créer un nom de variable pour récupérer l'URL de la page
+/*let params = new URLSearchParams(window.location.search);
+let productId = params.get("id");*/
 const id = new URL(window.location.href).searchParams.get("_id");
 
 //Variables qui vont recevoir le contenu HTML
@@ -14,6 +16,7 @@ const description = document.getElementById("description");
 let Couleurs;
 const selectionCouleur = document.getElementById("colors");
 selectionCouleur.addEventListener("change", function(event) {
+    //Recuperer la valeur de la cible de l'évenement dans "couleurs"
     Couleurs = event.target.value;   /* ligne 68 product.html */
 })
 
@@ -21,6 +24,7 @@ selectionCouleur.addEventListener("change", function(event) {
 let choixQuantité;
 const quantity = document.getElementById("quantity");
 quantity.addEventListener("change", function(event) {
+     //Recuperer la valeur de la cible de l'évenement dans "choixQuantité"
     choixQuantité = parseInt(event.target.value); /* ligne 76 product.html */
     /* parseInt() = analyse une chaîne de caractère fournie en argument et renvoie un entier exprimé dans une base donnée*/ 
 })
@@ -39,7 +43,7 @@ function recupAPI_Produits() {
     fetch(`http://localhost:3000/api/products/${id}`)
     //Test de validation si OK, récupération des données de l'API
     .then(function(reponse) {
-        return reponse.json(); 
+        return reponse.json(); //donne le résultat en json
         }) 
 
     //injecte code HTML dynamique dans notre variable
@@ -53,6 +57,8 @@ function recupAPI_Produits() {
             selectionCouleur.innerHTML += `<option Produit=${each}>${each}</option>`; // += Addition et affectation
         }
     })
+    .catch(function(err) { //Si Api indisponible Message d'erreur
+    });
 }
 
 // Déclenche la fonction recupAPI au chargement de la page
@@ -64,20 +70,22 @@ window.addEventListener("DOMContentLoaded", function() {
 
 /*LocalStorage*/
 
-// Enregistrer le panier dans le localStorage
+// Enregistrer le panier dans le localStorage en chaine de caractere
 function enregistrerPanier(panier) {
-    localStorage.setItem("panier", JSON.stringify(panier));
+    // On convertit l'objet en une chaîne JSON
+    // et on enregistre cette valeur avec le nom 'panier'
+    localStorage.setItem("panier", JSON.stringify(panier)); 
 }
 // Recuperer les données du localStorage
 function ajoutProduitPanier() {
     let panier = localStorage.getItem("panier");
     // verifier le cas où il y a deja des donnees enregistrees
     if (panier == null) {
-        return [];
+            return [];
         } 
         //transformer les donnees du LocalStorage en javascript
         else {
-        return JSON.parse(panier);
+            return JSON.parse(panier);
         }
 }
 
@@ -88,8 +96,8 @@ function ajoutProduit() {
     // Affilier un objet "produit" contenant les informations (paires clés-valeur)
     let produit = {
         id: id,
-        colors: Couleurs,
-        quantity: choixQuantité
+        colors: Couleurs, /*ligne 16*/
+        quantity: choixQuantité /*ligne 24*/ 
     };
     //récupèrer le panier
     let panier = ajoutProduitPanier();
@@ -125,74 +133,19 @@ enregistrerPanier(panier);
 ajoutProduitBtn.addEventListener("click",function(event) {
 
         //verifier si couleur choisie
-        if (Couleurs == undefined) {
+        if (Couleurs == undefined) { //Si couleur non renseignée > alerte
             event.preventDefault();
             alert("Veuillez sélectionner une couleur.");
         }
         //verifier quantité
         if (
-            choixQuantité == undefined) {
+            choixQuantité == undefined) { //Si quantité non renseignée > alerte
             event.preventDefault();
-            alert("Veuillez sélectionner une quantité entre 1 et 100.");
+            alert("Veuillez sélectionner une quantité.");
         }
         else {
-            ajoutProduit();
+            ajoutProduit(); //sinon function ajoutProduit
             alert("Article(s) ajouté(s) au panier");
         }
     });
-
-
-
-
-
-
-
-//Test Confirmation et validation
-
-/* 
-    // element de validation
-    let valide = true;
-    //verifier si couleur choisie
-    if (
-        Produit.color == "") 
-        {
-        valide = false;
-        alert("Veuillez sélectionner une couleur.");
-    }
-    //verifier quantité
-    if (
-        choixQuantité > 100 ||
-        choixQuantité < 1) 
-        {
-        valide = false; 
-        alert("Veuillez sélectionner une quantité entre 1 et 100.");
-    }
-    if (valide) {
-        ajoutProduit(Produit);
-    }
-});
-*/
-
-
-/*
-//fenetre de confirmation
-function fenetreConfirmation() {
-    if (
-        window.confirm(`Merci! Le produit "${document.getElementById("title").textContent}", 
-        de couleur : ${document.getElementById("colors").Produit} pour une quantité de : ${document.getElementById("quantity").Produit}, 
-        a bien été ajouté au panier. 
-        Appuyez sur "OK" pour consulter le panier ou sur "annuler" pour continuer vos achats.`)
-        ) {
-        window.location.href = "panier.html";
-        } else {
-        window.location;
-        }
-}
-*/
-
-
-
-
-
-
 
