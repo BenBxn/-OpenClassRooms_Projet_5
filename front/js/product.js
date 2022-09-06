@@ -29,11 +29,6 @@ quantity.addEventListener("change", function(event) {
     /* parseInt() = analyse une chaîne de caractère fournie en argument et renvoie un entier exprimé dans une base donnée*/ 
 })
 
-//bouton qui va ajouter les données dans localStorage
-const ajoutProduitBtn = document.getElementById("addToCart"); /*ligne 81 product.html */
-
-
-
 ////FONCTIONS////
 
 /*Recuperation données API*/
@@ -68,6 +63,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 
 
+
 /*LocalStorage*/
 
 // Enregistrer le panier dans le localStorage en chaine de caractere
@@ -91,61 +87,79 @@ function ajoutProduitPanier() {
 
 /*Panier*/
 
+//bouton qui va ajouter les données dans localStorage
+const ajoutProduitBtn = document.getElementById("addToCart"); /*ligne 81 product.html */
+
 //ajouter un produit 
 function ajoutProduit() {
-    // Affilier un objet "produit" contenant les informations (paires clés-valeur)
-    let produit = {
+let produit = {
         id: id,
         colors: Couleurs, /*ligne 16*/
         quantity: choixQuantité /*ligne 24*/ 
     };
-    //récupèrer le panier
-    let panier = ajoutProduitPanier();
-    // Rechercher dans le panier si l'article y est déjà présent
-    let detecterProduit = panier.find(p => p.id == produit.id);
-    let detecterCouleur = panier.find(p => p.colors == produit.colors);
-        // Si l'article n'est pas présent dans le panier, il est ajouté
-        if (detecterProduit == undefined) {
+//récupèrer le panier
+let panier = ajoutProduitPanier();
+// Rechercher dans le panier si l'article y est déjà présent
+let detecterProduit = panier.find(p => p.id == produit.id);
+let detecterCouleur = panier.find(p => p.colors == produit.colors);
+    // Si l'article n'est pas présent dans le panier, il est ajouté
+    if (detecterProduit == undefined) {
+        produit.quantity = choixQuantité; // x contient maintenant la même valeur que y
+        panier.push(produit); // ajoute "produit" à la fin de notre tableau panier
+    }
+    // Si l'article est présent, mais d'une couleur différente, il est ajouté
+    else {
+        if (detecterCouleur == undefined) {
             produit.quantity = choixQuantité; // x contient maintenant la même valeur que y
             panier.push(produit); // ajoute "produit" à la fin de notre tableau panier
         }
-        // Si l'article est présent, mais d'une couleur différente, il est ajouté
+        // Si l'article est présent (même type, même couleur), on augmente dans le panier la quantité
         else {
-            if (detecterCouleur == undefined) {
-                produit.quantity = choixQuantité; // x contient maintenant la même valeur que y
-                panier.push(produit); // ajoute "produit" à la fin de notre tableau panier
-            }
-            // Si l'article est présent (même type, même couleur), on augmente dans le panier la quantité
-            else {
-                detecterProduit.quantity += choixQuantité; // += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
-            }
-            }
+            detecterProduit.quantity = choixQuantité; // "=" pour modifier la quantité total du panier ou += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
+        }
+        }
 
 //enregistrer les modifications dans le localStorage
 enregistrerPanier(panier);
 }
 
-
-
-
-/* Confirmation et Validation */
 //Déclenche la fonction ajoutProduit en cliquant sur le BTN
 ajoutProduitBtn.addEventListener("click",function(event) {
 
-        //verifier si couleur choisie
-        if (Couleurs == undefined) { //Si couleur non renseignée > alerte
-            event.preventDefault();
-            alert("Veuillez sélectionner une couleur.");
+    let valide = true;
+    //verifier si couleur choisie
+    if (Couleurs == undefined ) { //Si couleur non renseignée > alerte
+        valide = false;
+        alert("Veuillez sélectionner une couleur.");
+    }
+    //verifier quantité
+    if (
+        choixQuantité == undefined ||
+        choixQuantité < 1 ||
+        choixQuantité > 100 ) { //Si quantité non renseignée > alerte
+        valide = false;
+        alert("Veuillez sélectionner une quantité.");
         }
-        //verifier quantité
-        if (
-            choixQuantité == undefined) { //Si quantité non renseignée > alerte
-            event.preventDefault();
-            alert("Veuillez sélectionner une quantité.");
-        }
-        else {
-            ajoutProduit(); //sinon function ajoutProduit
-            alert("Article(s) ajouté(s) au panier");
-        }
-    });
+    if (valide) {
+        ajoutProduit(); //sinon function ajoutProduit
+        fenetreConfirmation() //Function fenetreConfirmation ou /*alert("Article(s) ajouté(s) au panier");*/
+    }
+});
 
+//Function fenetreConfirmation
+function fenetreConfirmation() {
+    if (
+        window.confirm(`Votre commande : 
+        ${document.getElementById("title").textContent
+        }", 
+        ${document.getElementById("colors").value}, 
+        quantité: ${document.getElementById("quantity").value}, 
+        est ajoutée au panier.
+        Pour consulter votre panier, cliquez sur OK`)
+    ) {
+        window.location.href = "cart.html";
+    } else {
+        window.location;
+    }
+}
+    
