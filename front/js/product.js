@@ -124,7 +124,7 @@ enregistrerPanier(panier);
 }
 
 //Déclenche la fonction ajoutProduit en cliquant sur le BTN
-ajoutProduitBtn.addEventListener("click",function(event) {
+ajoutProduitBtn.addEventListener("click",() => {
 
     let valide = true;
     //verifier si couleur choisie
