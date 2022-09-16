@@ -26,7 +26,8 @@ const quantity = document.getElementById("quantity");
 quantity.addEventListener("change", function(event) {
      //Recuperer la valeur de la cible de l'évenement dans "choixQuantité"
     choixQuantité = parseInt(event.target.value); /* ligne 76 product.html */
-    /* parseInt() = analyse une chaîne de caractère fournie en argument et renvoie un entier exprimé dans une base donnée*/ 
+    /* parseInt() = analyse une chaîne de caractère fournie en argument 
+    et renvoie un entier exprimé dans une base donnée*/ 
 })
 
 ////FONCTIONS////
@@ -115,7 +116,9 @@ let detecterCouleur = panier.find(p => p.colors == produit.colors);
         }
         // Si l'article est présent (même type, même couleur), on augmente dans le panier la quantité
         else {
-            detecterProduit.quantity = choixQuantité; // "=" pour modifier la quantité total du panier ou += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, puis renvoie la nouvelle valeur de la variable
+            detecterProduit.quantity += choixQuantité; // "=" pour modifier la quantité total du panier  
+            // ou += Addition et affectation Ajoute la valeur de droite à la valeur de la variable de gauche, 
+            // puis renvoie la nouvelle valeur de la variable
         }
         }
 
@@ -142,7 +145,8 @@ ajoutProduitBtn.addEventListener("click",() => {
         }
     if (valide) {
         ajoutProduit(); //sinon function ajoutProduit
-        fenetreConfirmation() //Function fenetreConfirmation ou /*alert("Article(s) ajouté(s) au panier");*/
+        fenetreConfirmation() //Function fenetreConfirmation ou 
+        /*alert("Article(s) ajouté(s) au panier");*/
     }
 });
 
@@ -162,4 +166,3 @@ function fenetreConfirmation() {
         window.location;
     }
 }
-    
