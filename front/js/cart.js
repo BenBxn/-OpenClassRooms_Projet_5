@@ -76,7 +76,7 @@ function affichagePanier() {
                         </div>
                     </div>
                 </article>`;
-
+                
                 /*console.log(panier[p]);*/
                 // calculer article total & montant total 
                 sommeProduit += JSON.parse(panier[p].quantity); 
